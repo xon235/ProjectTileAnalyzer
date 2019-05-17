@@ -13,7 +13,7 @@ class Color(Enum):
     GREEN = 4
     BLUE = 5
 
-class State
+class State:
     def __init__(self, board, score, pieces):
         self.board = copy.deepcopy(board)
         self.score = score
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     pieces = getPiecesFromFile()
     queue = deque([State(emptyBoard, 0, pieces)])
 
-    while()
+    while len(queue) > 0:
 
 def getPiecesFromFile():
     pieces = []
