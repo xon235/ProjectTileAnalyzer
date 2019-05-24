@@ -9,6 +9,10 @@ if __name__ == '__main__':
     H = 5
     emptyBoard = [[None for x in range(W)] for y in range(H)]
     queue = deque([State(emptyBoard, 0, get_pieces_from_file(), 0)])
+    plays = []#debug
+
+    aaaa = 4
+    bbbb = 2
 
     # Queue loop
     while len(queue) > 0:
@@ -19,8 +23,8 @@ if __name__ == '__main__':
         depth = node.depth
         # Input start position loop
         if len(pieces) > 2:
-            for row in range(len(board)):
-                for col in range(len(board[0])):
+            for row in range(aaaa, len(board)):
+                for col in range(bbbb, len(board[0])):
                     bC = copy.deepcopy(board)
                     sC = score
                     pC = copy.deepcopy(pieces)
@@ -45,19 +49,30 @@ if __name__ == '__main__':
                                     p = pC.popleft()
                                     p.score = 10 * ((len(dirStack) // 3) + 1)
                                     bC[pos.y][pos.x] = p
-                                    if len(dirStack) >= 2:
-                                        # if len(dirStack) == 24:#debug
-                                        #     print('Dir: %d'%len(dirStack))#debug
-                                        bCC = copy.deepcopy(bC)
-                                        sCC = sC + resolve_board(bCC)
-                                        pCC = copy.deepcopy(pC)
-                                        dCC = dC + 1
-                                        tmp = maxScore #debug
-                                        maxScore = max(maxScore, sCC) #debug
-                                        if tmp != maxScore: #debug
-                                            print_board(bC)#debug
-                                        queue.append(State(bCC, sCC, pCC, dCC + 1))
-                                        print('D: %d / Q: %d / S: %5d / M: %5d / R:%d, C:%d / P: %2d'%(dCC, len(queue), sCC, maxScore, row, col, len(pCC))) #debug
+                                    # if len(dirStack) >= 12:
+                                    # if len(dirStack) == 24:#debug
+                                    #     print('Dir: %d'%len(dirStack))#debug
+                                    bCC = copy.deepcopy(bC)
+                                    sCC = sC + resolve_board(bCC)
+                                    pCC = copy.deepcopy(pC)
+                                    dCC = dC + 1
+                                    tmp = maxScore #debug
+                                    maxScore = max(maxScore, sCC) #debug
+                                    if tmp != maxScore: #debug
+                                        # print_board(bC)#debug
+                                        # print_board(bCC)#debug
+                                        if len(queue) > 0:#debug
+                                            queue.popleft()#debug
+                                        if len(plays) < dCC:
+                                            plays.append([copy.deepcopy(bC), copy.deepcopy(bCC)])
+                                        else:
+                                            plays[dCC-1] = [copy.deepcopy(bC), copy.deepcopy(bCC)]
+
+                                        print('Plays: %d'%len(plays))
+
+                                        queue.append(State(bCC, sCC, pCC, dCC))
+
+                                    print('D: %d / Q: %d / S: %5d / M: %5d / R:%d, C:%d / P: %2d'%(dCC, len(queue), sCC, maxScore, row, col, len(pCC))) #debug
                                     break
                             else:
                                 pC.appendleft(bC[pos.y][pos.x])
@@ -68,3 +83,14 @@ if __name__ == '__main__':
                                     pos -= dir_to_list(DIR(lastDir))
                                 else:
                                     break;
+        aaaa = 0
+        bbbb = 0
+
+    for i in range(len(plays)):
+        print('-------------------------------------------------------------')
+        print_board(plays[i][0])
+        print()
+        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        print()
+        print_board(plays[i][1])
+        print('-------------------------------------------------------------')
