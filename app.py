@@ -11,8 +11,8 @@ if __name__ == '__main__':
     queue = deque([State(emptyBoard, 0, get_pieces_from_file(), 0)])
     plays = []#debug
 
-    aaaa = 4
-    bbbb = 2
+    rowSearchStart = 4
+    colSearchStart = 2
 
     # Queue loop
     while len(queue) > 0:
@@ -23,8 +23,8 @@ if __name__ == '__main__':
         depth = node.depth
         # Input start position loop
         if len(pieces) > 2:
-            for row in range(aaaa, len(board)):
-                for col in range(bbbb, len(board[0])):
+            for row in range(rowSearchStart, len(board)):
+                for col in range(colSearchStart, len(board[0])):
                     bC = copy.deepcopy(board)
                     sC = score
                     pC = copy.deepcopy(pieces)
@@ -58,21 +58,12 @@ if __name__ == '__main__':
                                     dCC = dC + 1
                                     tmp = maxScore #debug
                                     maxScore = max(maxScore, sCC) #debug
-                                    if tmp != maxScore: #debug
-                                        # print_board(bC)#debug
-                                        # print_board(bCC)#debug
-                                        if len(queue) > 0:#debug
-                                            queue.popleft()#debug
-                                        if len(plays) < dCC:
-                                            plays.append([copy.deepcopy(bC), copy.deepcopy(bCC)])
-                                        else:
-                                            plays[dCC-1] = [copy.deepcopy(bC), copy.deepcopy(bCC)]
+                                    intermediateMax = intermediate_max(bCC, pCC, sCC)
 
-                                        print('Plays: %d'%len(plays))
-
+                                    if  intermediateMax > 3700:
                                         queue.append(State(bCC, sCC, pCC, dCC))
 
-                                    print('D: %d / Q: %d / S: %5d / M: %5d / R:%d, C:%d / P: %2d'%(dCC, len(queue), sCC, maxScore, row, col, len(pCC))) #debug
+                                    print('D: %d / Q: %d / S: %5d / M: %5d / R:%d, C:%d / P: %2d, I: %2d'%(dCC, len(queue), sCC, maxScore, row, col, len(pCC), intermediateMax)) #debug
                                     break
                             else:
                                 pC.appendleft(bC[pos.y][pos.x])
@@ -83,8 +74,8 @@ if __name__ == '__main__':
                                     pos -= dir_to_list(DIR(lastDir))
                                 else:
                                     break;
-        aaaa = 0
-        bbbb = 0
+        rowSearchStart = 0
+        colSearchStart = 0
 
     for i in range(len(plays)):
         print('-------------------------------------------------------------')

@@ -30,7 +30,8 @@ for i in range(5):
     board[4][i] = pieces.popleft()
     board[4][i].score = 10 * (((count-1) // 3) + 1)
 
-print(resolve_board(board))
+score = resolve_board(board)
+print_board(board)
 
 # print(is_pos_valid(Point(4, 4), board))
 # print(is_pos_valid(Point(1, 8), board))
@@ -41,3 +42,7 @@ print(resolve_board(board))
 # print(is_inside_board(Point(1, 8), board))
 # print(is_inside_board(Point(8, 1), board))
 # print(is_inside_board(Point(1, -1), board))
+
+print(simple_max(board, pieces, score))
+print(intermediate_max(board, pieces, score))
+print(pieces[2].color)

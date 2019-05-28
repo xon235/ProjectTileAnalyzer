@@ -147,3 +147,88 @@ def resolve_board(board):
             score += board[p.y][p.x].score
             board[p.y][p.x] = None
     return score
+
+def score_of_n_pieces(n):
+    unit = 10
+    quotient = n//3
+    remainder = n%3
+    pre = unit*3*(quotient*(quotient+1))//2
+    post = unit*remainder * (quotient+1)
+    return pre + post
+
+def simple_max(board, pieces, score):
+    simpleMax = score
+    noneCount = 0
+    boardSum = 0
+    height = len(board)
+    width = len(board[0])
+    for row in range(height):
+        for col in range(width):
+            if board[row][col] == None:
+                noneCount += 1
+            else:
+                boardSum += board[row][col].score
+
+    simpleMax += boardSum
+
+    if len(pieces) > noneCount:
+        remainPiecesLen = len(pieces) - noneCount
+        maxNumOfPiecesOnBoard = width*height
+        quotient = (remainPiecesLen)//maxNumOfPiecesOnBoard
+        remainder = (remainPiecesLen)%maxNumOfPiecesOnBoard
+
+        simpleMax += quotient * score_of_n_pieces(maxNumOfPiecesOnBoard)
+        simpleMax += score_of_n_pieces(remainder)
+
+        simpleMax += score_of_n_pieces(noneCount)
+    else:
+        simpleMax += score_of_n_pieces(len(pieces))
+
+    return simpleMax
+
+def intermediate_max(board, pieces, score):
+    simpleMax = score
+    colorCount = {COLOR.RED: 0, COLOR.ORANGE: 0, COLOR.YELLOW: 0, COLOR.GREEN: 0, COLOR.BLUE: 0, None: 0}
+    noneCount = 0
+    boardSum = 0
+    height = len(board)
+    width = len(board[0])
+    for row in range(height):
+        for col in range(width):
+            if board[row][col] == None:
+                colorCount[None] += 1
+            else:
+                colorCount[board[row][col].color] += 1
+                boardSum += board[row][col].score
+
+    simpleMax += boardSum
+    # print(score)
+    # print(boardSum)
+    # print(colorCount)
+    count = 0
+    remainCount = 0
+    while count < len(pieces):
+        remainCount = 0
+        for i in range(count, count+colorCount[None]):
+            if i < len(pieces):
+                colorCount[pieces[i].color] += 1
+                count += 1
+            else:
+                break
+
+        # print()
+        # print(count)
+        # print(colorCount)
+
+        simpleMax += score_of_n_pieces(colorCount[None])
+        for key in colorCount:
+            if key != None:
+                colorCount[key] %= 3
+                remainCount += colorCount[key]
+
+        colorCount[None] = width*height - remainCount
+        # print(colorCount)
+
+    # print(remainCount)
+    simpleMax -= score_of_n_pieces(remainCount)
+    return simpleMax
